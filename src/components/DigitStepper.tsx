@@ -1,0 +1,134 @@
+import { useEffect, useState } from 'react';
+import type { Working } from '../lib/trachtenberg';
+
+const KIND_LABELS: Record<string, string> = {
+  first: 'Rightmost digit — no neighbor yet',
+  middle: 'Middle digit',
+  lead: 'Leading zero — the front of the number',
+  overflow: 'One more spot — just the carry',
+};
+
+interface Props {
+  working: Working;
+  /** start on the last "done" view instead of step 1 */
+  startDone?: boolean;
+}
+
+export default function DigitStepper({ working, startDone = false }: Props) {
+  const { steps, paddedDigits, padCount, multiplicand, multiplier, result } = working;
+  const [view, setView] = useState(startDone ? steps.length : 0);
+  const done = view >= steps.length;
+  const step = done ? null : steps[view];
+
+  useEffect(() => {
+    setView(startDone ? working.steps.length : 0);
+  }, [working, startDone]);
+
+  const columns = paddedDigits.map((digit, i) => {
+    const position = paddedDigits.length - 1 - i;
+    const isPad = i < padCount;
+    const isCurrent = !done && position === view;
+    const isNeighbor = !done && view > 0 && position === view - 1;
+    const filled = done || position < view;
+    const fresh = position === view - 1 && !done;
+    const showCarry = isCurrent && step !== null && step.carryIn > 0;
+    return { digit, position, isPad, isCurrent, isNeighbor, filled, fresh, showCarry, key: i };
+  });
+
+  return (
+    <div className="stepper">
+      <div className="digit-board">
+        <div
+          className="digit-grid"
+          style={{ gridTemplateColumns: `repeat(${paddedDigits.length}, auto)` }}
+        >
+          {columns.map((c) => (
+            <div className="digit-cell" key={c.key}>
+              <div className="carry-slot">{c.showCarry ? `+${step!.carryIn}` : ''}</div>
+              <div
+                className={[
+                  'digit-tile',
+                  c.isPad ? 'pad' : '',
+                  c.isCurrent ? 'current' : '',
+                  c.isNeighbor ? 'neighbor' : '',
+                ].join(' ')}
+              >
+                {c.isCurrent && <span className="tile-tag">digit</span>}
+                {c.isNeighbor && <span className="tile-tag">neighbor</span>}
+                {c.digit}
+              </div>
+              <div
+                className={[
+                  'result-slot',
+                  c.filled ? 'filled' : '',
+                  c.fresh ? 'fresh' : '',
+                ].join(' ')}
+              >
+                {c.filled ? steps[c.position].resultDigit : '·'}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {step ? (
+        <div className="step-explain">
+          <div className="step-count">
+            Step {view + 1} of {steps.length} · {KIND_LABELS[step.kind]}
+          </div>
+          <div className="part-pills">
+            {step.parts.length === 0 && (
+              <span className="part-pill">
+                nothing left to compute <span className="val">0</span>
+              </span>
+            )}
+            {step.parts.map((p, i) => (
+              <span className="part-pill" key={i}>
+                {p.label} <span className="val">{p.value}</span>
+              </span>
+            ))}
+            {step.carryIn > 0 && (
+              <span className="part-pill carry">
+                carry from last step <span className="val">+{step.carryIn}</span>
+              </span>
+            )}
+          </div>
+          <div className="step-outcome">
+            <span className="total">= {step.total}</span>
+            <span className="write">→ write {step.resultDigit}</span>
+            {step.carryOut > 0 && <span className="carry">carry {step.carryOut}</span>}
+          </div>
+        </div>
+      ) : (
+        <div className="step-explain stepper-done">
+          <div className="step-count">All done — read the answer left to right</div>
+          <div className="big-answer">
+            {multiplicand.toLocaleString()} × {multiplier} ={' '}
+            {result.toLocaleString()}
+          </div>
+        </div>
+      )}
+
+      <div className="progress-dots">
+        {steps.map((_, i) => (
+          <span key={i} className={i < view ? 'done' : i === view ? 'now' : ''} />
+        ))}
+      </div>
+
+      <div className="stepper-controls">
+        <button className="btn btn-ghost" onClick={() => setView(Math.max(0, view - 1))} disabled={view === 0}>
+          ‹ Back
+        </button>
+        {done ? (
+          <button className="btn btn-ghost" onClick={() => setView(0)}>
+            ↺ Replay
+          </button>
+        ) : (
+          <button className="btn btn-primary" onClick={() => setView(view + 1)}>
+            {view === steps.length - 1 ? 'Finish' : 'Next step ›'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
