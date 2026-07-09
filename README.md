@@ -8,7 +8,8 @@ of speed multiplication: interactive digit-by-digit tutorials for every rule
 
 - **Learn** — the five core concepts (neighbors, leading zeros, halving,
   the odd +5, carries) and an interactive walkthrough for each multiplier rule,
-  presented in the classic learning order from Trachtenberg's book.
+  presented in the classic learning order from Trachtenberg's book, plus the
+  direct (two-finger) method for multiplying any two large numbers.
 - **Practice** — endless randomly generated problems. Pick which rules to
   drill and how many digits the numbers have; every question can be replayed
   step by step the Trachtenberg way.

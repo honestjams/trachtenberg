@@ -46,11 +46,14 @@ export default function DigitStepper({ working, startDone = false }: Props) {
     });
   }, [view, working]);
 
+  const pairTag = working.method === 'direct' ? 'pair' : 'neighbor';
+
   const columns = paddedDigits.map((digit, i) => {
     const position = paddedDigits.length - 1 - i;
     const isPad = i < padCount;
     const isCurrent = !done && position === view;
-    const isNeighbor = !done && view > 0 && position === view - 1;
+    const isNeighbor =
+      !done && position < view && position >= view - working.pairSpan && position >= 0;
     const filled = done || position < view;
     const fresh = position === view - 1 && !done;
     const showCarry = isCurrent && step !== null && step.carryIn > 0;
@@ -76,7 +79,7 @@ export default function DigitStepper({ working, startDone = false }: Props) {
                 ].join(' ')}
               >
                 {c.isCurrent && <span className="tile-tag">digit</span>}
-                {c.isNeighbor && <span className="tile-tag">neighbor</span>}
+                {c.isNeighbor && <span className="tile-tag">{pairTag}</span>}
                 {c.digit}
               </div>
               <div
@@ -96,7 +99,7 @@ export default function DigitStepper({ working, startDone = false }: Props) {
       {step ? (
         <div className="step-explain">
           <div className="step-count">
-            Step {view + 1} of {steps.length} · {KIND_LABELS[step.kind]}
+            Step {view + 1} of {steps.length} · {step.title ?? KIND_LABELS[step.kind]}
           </div>
           <div className="part-pills">
             {step.parts.length === 0 && (

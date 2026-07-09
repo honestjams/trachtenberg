@@ -3,8 +3,10 @@ import { useSearchParams } from 'react-router-dom';
 import DigitStepper from '../components/DigitStepper';
 import {
   MULTIPLIERS,
+  randInt,
   randomMultiplicand,
   workOut,
+  workOutDirect,
   type Multiplier,
   type Working,
 } from '../lib/trachtenberg';
@@ -14,6 +16,7 @@ import {
   recordAnswer,
   saveSettings,
   type EntryMode,
+  type PracticeKey,
 } from '../lib/storage';
 
 const DIGIT_OPTIONS = [
@@ -23,51 +26,79 @@ const DIGIT_OPTIONS = [
   { digits: 5, label: '5 digits' },
 ];
 
+const BIG_OPTIONS: { key: PracticeKey; label: string }[] = [
+  { key: 'big2', label: '× 2-digit' },
+  { key: 'big3', label: '× 3-digit' },
+];
+
+const ALL_KEYS: PracticeKey[] = [...MULTIPLIERS, 'big2', 'big3'];
+
 const MAX_ANSWER_DIGITS = 9;
 
 type Phase = 'setup' | 'asking' | 'answered';
 
-function makeQuestion(multipliers: Multiplier[], digitCount: number): Working {
-  const m = multipliers[Math.floor(Math.random() * multipliers.length)];
-  return workOut(randomMultiplicand(digitCount), m);
+interface Question {
+  working: Working;
+  key: PracticeKey;
+}
+
+function keyOrder(k: PracticeKey): number {
+  return k === 'big2' ? 100 : k === 'big3' ? 101 : k;
+}
+
+function makeQuestion(keys: PracticeKey[], digitCount: number): Question {
+  const key = keys[Math.floor(Math.random() * keys.length)];
+  const multiplicand = randomMultiplicand(digitCount);
+  const working =
+    key === 'big2'
+      ? workOutDirect(multiplicand, randInt(13, 99))
+      : key === 'big3'
+        ? workOutDirect(multiplicand, randInt(101, 999))
+        : workOut(multiplicand, key);
+  return { working, key };
 }
 
 export default function Practice() {
   const [searchParams] = useSearchParams();
   const stored = useMemo(loadSettings, []);
-  const preselect = Number(searchParams.get('m'));
-  const initialMultipliers =
-    MULTIPLIERS.includes(preselect as Multiplier)
-      ? [preselect as Multiplier]
-      : stored.multipliers.filter((m) => MULTIPLIERS.includes(m));
+  const mParam = searchParams.get('m');
+  const preselect: PracticeKey | null =
+    mParam === 'big2' || mParam === 'big3'
+      ? mParam
+      : MULTIPLIERS.includes(Number(mParam) as Multiplier)
+        ? (Number(mParam) as Multiplier)
+        : null;
+  const initialKeys = preselect
+    ? [preselect]
+    : stored.multipliers.filter((m) => ALL_KEYS.includes(m));
 
-  const [selected, setSelected] = useState<Multiplier[]>(
-    initialMultipliers.length > 0 ? initialMultipliers : [11]
+  const [selected, setSelected] = useState<PracticeKey[]>(
+    initialKeys.length > 0 ? initialKeys : [11]
   );
   const [digitCount, setDigitCount] = useState(stored.digitCount);
   const [entry, setEntry] = useState<EntryMode>(stored.entry ?? 'rtl');
   const [phase, setPhase] = useState<Phase>('setup');
-  const [question, setQuestion] = useState<Working | null>(null);
+  const [question, setQuestion] = useState<Question | null>(null);
   const [answer, setAnswer] = useState('');
   const [wasCorrect, setWasCorrect] = useState(false);
   const [showSteps, setShowSteps] = useState(false);
   const [streak, setStreak] = useState(() => loadStats().streak);
   const [session, setSession] = useState({ correct: 0, total: 0 });
 
-  const persist = (next: Partial<{ multipliers: Multiplier[]; digitCount: number; entry: EntryMode }>) =>
+  const persist = (next: Partial<{ multipliers: PracticeKey[]; digitCount: number; entry: EntryMode }>) =>
     saveSettings({
       multipliers: next.multipliers ?? selected,
       digitCount: next.digitCount ?? digitCount,
       entry: next.entry ?? entry,
     });
 
-  const toggle = (m: Multiplier) => {
+  const toggle = (m: PracticeKey) => {
     setSelected((prev) =>
       prev.includes(m)
         ? prev.length > 1
           ? prev.filter((x) => x !== m)
           : prev
-        : [...prev, m].sort((a, b) => a - b)
+        : [...prev, m].sort((a, b) => keyOrder(a) - keyOrder(b))
     );
   };
 
@@ -98,8 +129,8 @@ export default function Practice() {
 
   const submit = () => {
     if (!question || answer === '') return;
-    const correct = Number(answer) === question.result;
-    const stats = recordAnswer(question.multiplier, correct);
+    const correct = Number(answer) === question.working.result;
+    const stats = recordAnswer(question.key, correct);
     setStreak(stats.streak);
     setSession((s) => ({ correct: s.correct + (correct ? 1 : 0), total: s.total + 1 }));
     setWasCorrect(correct);
@@ -139,7 +170,7 @@ export default function Practice() {
         </header>
 
         <div className="card">
-          <div className="setting-label">Multipliers</div>
+          <div className="setting-label">Rule multipliers</div>
           <div className="chip-row">
             {MULTIPLIERS.map((m) => (
               <button
@@ -151,8 +182,22 @@ export default function Practice() {
               </button>
             ))}
           </div>
-          <div className="chip-row" style={{ marginTop: 10 }}>
-            <button className="chip" onClick={() => setSelected([...MULTIPLIERS])}>
+          <div className="setting-label" style={{ marginTop: 18 }}>
+            Big multipliers — the two-finger method
+          </div>
+          <div className="chip-row">
+            {BIG_OPTIONS.map((o) => (
+              <button
+                key={o.key}
+                className={`chip${selected.includes(o.key) ? ' on' : ''}`}
+                onClick={() => toggle(o.key)}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+          <div className="chip-row" style={{ marginTop: 14 }}>
+            <button className="chip" onClick={() => setSelected([...ALL_KEYS])}>
               Select all
             </button>
           </div>
@@ -196,9 +241,9 @@ export default function Practice() {
 
       <div className="card problem-card">
         <div className="problem">
-          {question.multiplicand.toLocaleString()}
+          {question.working.multiplicand.toLocaleString()}
           <span className="times">×</span>
-          {question.multiplier}
+          {question.working.multiplier}
         </div>
 
         <div
@@ -262,7 +307,7 @@ export default function Practice() {
           <div className={`feedback ${wasCorrect ? 'good' : 'bad'}`}>
             {wasCorrect
               ? '✓ Correct — nice one!'
-              : `✗ Not quite. The answer is ${question.result.toLocaleString()}.`}
+              : `✗ Not quite. The answer is ${question.working.result.toLocaleString()}.`}
           </div>
 
           {showSteps ? (
@@ -270,7 +315,7 @@ export default function Practice() {
               <div className="eyebrow" style={{ marginBottom: 14 }}>
                 The Trachtenberg way, step by step
               </div>
-              <DigitStepper working={question} />
+              <DigitStepper working={question.working} />
             </div>
           ) : (
             <button className="btn btn-ghost btn-block" onClick={() => setShowSteps(true)}>

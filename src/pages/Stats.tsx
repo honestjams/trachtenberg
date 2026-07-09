@@ -1,7 +1,19 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MULTIPLIERS } from '../lib/trachtenberg';
-import { loadStats, masteryFor, resetStats, type Stats as StatsData } from '../lib/storage';
+import {
+  loadStats,
+  masteryFor,
+  resetStats,
+  type PracticeKey,
+  type Stats as StatsData,
+} from '../lib/storage';
+
+const STAT_ROWS: { key: PracticeKey; label: string }[] = [
+  ...MULTIPLIERS.map((m) => ({ key: m as PracticeKey, label: `×${m}` })),
+  { key: 'big2', label: '×2-digit' },
+  { key: 'big3', label: '×3-digit' },
+];
 
 export default function Stats() {
   const [stats, setStats] = useState<StatsData>(loadStats);
@@ -38,13 +50,13 @@ export default function Stats() {
         <div className="eyebrow" style={{ marginBottom: 10 }}>
           Accuracy by rule
         </div>
-        {MULTIPLIERS.map((m) => {
-          const rule = stats.byRule[m];
+        {STAT_ROWS.map(({ key, label }) => {
+          const rule = stats.byRule[key];
           const pct = rule && rule.total > 0 ? Math.round((rule.correct / rule.total) * 100) : 0;
-          const mastery = masteryFor(stats, m);
+          const mastery = masteryFor(stats, key);
           return (
-            <div className="rule-stat" key={m}>
-              <span className="mult">×{m}</span>
+            <div className="rule-stat" key={key}>
+              <span className="mult">{label}</span>
               <div className="meter">
                 <div style={{ width: `${pct}%` }} />
               </div>

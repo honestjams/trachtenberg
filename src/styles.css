@@ -935,9 +935,9 @@ a {
 
 .rule-stat .mult {
   flex: none;
-  width: 48px;
+  width: 66px;
   font-weight: 800;
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-variant-numeric: tabular-nums;
 }
 

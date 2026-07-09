@@ -50,6 +50,23 @@ export default function Learn() {
           </div>
         </section>
       ))}
+
+      <section>
+        <div className="setting-label">The grand finale</div>
+        <div className="rule-list">
+          <Link
+            to="/learn/direct"
+            className={`rule-row${masteryFor(stats, 'big2') === 'mastered' ? ' mastered' : ''}`}
+          >
+            <div className="rule-num">×𝑛𝑛</div>
+            <div className="meta">
+              <h3>Big × big: the two-finger method</h3>
+              <p>Multiply any two large numbers against each other</p>
+            </div>
+            <span className="chev">›</span>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

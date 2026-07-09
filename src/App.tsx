@@ -2,6 +2,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import NavBar from './components/NavBar';
 import Basics from './pages/Basics';
+import DirectTutorial from './pages/DirectTutorial';
 import Home from './pages/Home';
 import Learn from './pages/Learn';
 import Practice from './pages/Practice';
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/learn" element={<Learn />} />
         <Route path="/learn/basics" element={<Basics />} />
+        <Route path="/learn/direct" element={<DirectTutorial />} />
         <Route path="/learn/:multiplier" element={<Tutorial />} />
         <Route path="/practice" element={<Practice />} />
         <Route path="/stats" element={<Stats />} />

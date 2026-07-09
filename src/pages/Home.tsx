@@ -16,8 +16,8 @@ export default function Home() {
           Multiply <span className="gradient-text">huge numbers</span> in your head
         </h1>
         <p>
-          No times tables. No long multiplication. Just ten simple rules, one digit
-          at a time.
+          No times tables. No long multiplication. Ten simple rules — plus one
+          two-finger method for everything else.
         </p>
       </header>
 

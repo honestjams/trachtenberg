@@ -1,12 +1,15 @@
 import type { Multiplier } from './trachtenberg';
 
+/** what a practice question is scored under: a rule multiplier, or the direct method by size */
+export type PracticeKey = Multiplier | 'big2' | 'big3';
+
 export interface RuleStats {
   correct: number;
   total: number;
 }
 
 export interface Stats {
-  byRule: Partial<Record<Multiplier, RuleStats>>;
+  byRule: Partial<Record<PracticeKey, RuleStats>>;
   streak: number;
   bestStreak: number;
   totalCorrect: number;
@@ -16,7 +19,7 @@ export interface Stats {
 export type EntryMode = 'rtl' | 'ltr';
 
 export interface PracticeSettings {
-  multipliers: Multiplier[];
+  multipliers: PracticeKey[];
   digitCount: number;
   entry: EntryMode;
 }
@@ -53,12 +56,12 @@ export function loadStats(): Stats {
   return read(STATS_KEY, emptyStats);
 }
 
-export function recordAnswer(multiplier: Multiplier, correct: boolean): Stats {
+export function recordAnswer(key: PracticeKey, correct: boolean): Stats {
   const stats = loadStats();
-  const rule = stats.byRule[multiplier] ?? { correct: 0, total: 0 };
+  const rule = stats.byRule[key] ?? { correct: 0, total: 0 };
   rule.total += 1;
   if (correct) rule.correct += 1;
-  stats.byRule[multiplier] = rule;
+  stats.byRule[key] = rule;
   stats.totalAnswered += 1;
   if (correct) {
     stats.totalCorrect += 1;
@@ -86,8 +89,8 @@ export function saveSettings(settings: PracticeSettings): void {
 
 export type Mastery = 'new' | 'learning' | 'mastered';
 
-export function masteryFor(stats: Stats, multiplier: Multiplier): Mastery {
-  const rule = stats.byRule[multiplier];
+export function masteryFor(stats: Stats, key: PracticeKey): Mastery {
+  const rule = stats.byRule[key];
   if (!rule || rule.total === 0) return 'new';
   if (rule.correct >= 10 && rule.correct / rule.total >= 0.8) return 'mastered';
   return 'learning';
