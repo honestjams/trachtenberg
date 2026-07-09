@@ -13,6 +13,9 @@ const STAT_ROWS: { key: PracticeKey; label: string }[] = [
   ...MULTIPLIERS.map((m) => ({ key: m as PracticeKey, label: `×${m}` })),
   { key: 'big2', label: '×2-digit' },
   { key: 'big3', label: '×3-digit' },
+  { key: 'add', label: 'Addition' },
+  { key: 'div', label: 'Division' },
+  { key: 'square', label: 'Squares' },
 ];
 
 export default function Stats() {

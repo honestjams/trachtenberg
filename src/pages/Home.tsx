@@ -13,11 +13,11 @@ export default function Home() {
       <header className="hero">
         <div className="eyebrow">The Trachtenberg Method</div>
         <h1>
-          Multiply <span className="gradient-text">huge numbers</span> in your head
+          Do <span className="gradient-text">huge math</span> in your head
         </h1>
         <p>
-          No times tables. No long multiplication. Ten simple rules — plus one
-          two-finger method for everything else.
+          Multiply, add, divide and square at speed — one digit at a time, never
+          holding more than a small number in your head.
         </p>
       </header>
 
@@ -55,8 +55,9 @@ export default function Home() {
         <p style={{ color: 'var(--muted)', fontSize: '0.92rem' }}>
           Jakow Trachtenberg developed this system of speed mathematics entirely in
           his head while imprisoned in a Nazi concentration camp, with no pen or
-          paper. Each multiplier from 2 to 12 gets its own simple rule — apply it
-          digit by digit, right to left, and the answer appears.
+          paper. Multiplication rules for 2 through 12, a two-finger method for big
+          numbers, addition that never counts past eleven, sliding-remainder
+          division, squaring shortcuts — and a check to catch every mistake.
         </p>
         <Link
           to="/learn/basics"

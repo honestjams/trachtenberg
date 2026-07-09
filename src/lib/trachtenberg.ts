@@ -19,6 +19,8 @@ export type Method = 'rule' | 'direct';
 export interface StepPart {
   label: string;
   value: number;
+  /** finger index for the direct method (0 = units finger) — used for color coding */
+  tone?: number;
 }
 
 export interface Step {
@@ -43,6 +45,8 @@ export interface Working {
   method: Method;
   /** how many tiles to the right of the current digit take part in a step (1 = the neighbor) */
   pairSpan: number;
+  /** digits of the multiplier, left to right — only set for the direct method */
+  multiplierDigits?: number[];
   /** digits of the multiplicand, left to right (no padding) */
   digits: number[];
   /** padded digits, left to right; length === steps.length */
@@ -240,7 +244,11 @@ export function workOutDirect(multiplicand: number, multiplier: number): Working
       const i = pos - j;
       if (i < 0 || i >= n) continue;
       const place = PLACE_NAMES[j] ?? `place ${j + 1}`;
-      parts.push({ label: `${place} ${bAt(j)} × ${aAt(i)}`, value: bAt(j) * aAt(i) });
+      parts.push({
+        label: `${place} finger: ${bAt(j)} × ${aAt(i)}`,
+        value: bAt(j) * aAt(i),
+        tone: j,
+      });
     }
     const total = parts.reduce((sum, p) => sum + p.value, 0) + carry;
     const resultDigit = total % 10;
@@ -280,6 +288,7 @@ export function workOutDirect(multiplicand: number, multiplier: number): Working
     multiplier,
     method: 'direct',
     pairSpan: k - 1,
+    multiplierDigits: bDigits,
     digits,
     paddedDigits,
     padCount,

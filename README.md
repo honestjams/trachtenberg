@@ -8,12 +8,16 @@ of speed multiplication: interactive digit-by-digit tutorials for every rule
 
 - **Learn** — the five core concepts (neighbors, leading zeros, halving,
   the odd +5, carries) and an interactive walkthrough for each multiplier rule,
-  presented in the classic learning order from Trachtenberg's book, plus the
-  direct (two-finger) method for multiplying any two large numbers.
-- **Practice** — endless randomly generated problems. Pick which rules to
-  drill and how many digits the numbers have; every question can be replayed
-  step by step the Trachtenberg way.
-- **Stats** — streaks, accuracy, and per-rule mastery, stored locally on device.
+  presented in the classic learning order from Trachtenberg's book; the direct
+  (two-finger) method for multiplying any two large numbers, with an animated
+  sliding-finger visualization; speed addition (the never-count-past-11 tick
+  method); speed division with the sliding remainder; the squaring shortcuts
+  (ends in 5, near 50, near 100); and the digit-sum check for catching errors.
+- **Practice** — endless randomly generated problems across every skill. Pick
+  what to drill and how big the numbers get; every question can be replayed
+  step by step the Trachtenberg way. Answers are typed units-first by default
+  (matching the order the method produces digits) with a left-to-right toggle.
+- **Stats** — streaks, accuracy, and per-skill mastery, stored locally on device.
 
 ## Tech
 

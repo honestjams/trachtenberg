@@ -47,6 +47,9 @@ export default function DigitStepper({ working, startDone = false }: Props) {
   }, [view, working]);
 
   const pairTag = working.method === 'direct' ? 'pair' : 'neighbor';
+  const bDigits = working.multiplierDigits;
+  const fingerAt = (j: number): number | null =>
+    bDigits && j >= 0 && j < bDigits.length ? bDigits[bDigits.length - 1 - j] : null;
 
   const columns = paddedDigits.map((digit, i) => {
     const position = paddedDigits.length - 1 - i;
@@ -57,7 +60,22 @@ export default function DigitStepper({ working, startDone = false }: Props) {
     const filled = done || position < view;
     const fresh = position === view - 1 && !done;
     const showCarry = isCurrent && step !== null && step.carryIn > 0;
-    return { digit, position, isPad, isCurrent, isNeighbor, filled, fresh, showCarry, key: i };
+    // which multiplier finger (0 = units) sits under this column right now
+    const fingerJ = !done && bDigits ? view - position : -1;
+    const finger = fingerAt(fingerJ);
+    return {
+      digit,
+      position,
+      isPad,
+      isCurrent,
+      isNeighbor,
+      filled,
+      fresh,
+      showCarry,
+      fingerJ,
+      finger,
+      key: i,
+    };
   });
 
   return (
@@ -76,12 +94,20 @@ export default function DigitStepper({ working, startDone = false }: Props) {
                   c.isPad ? 'pad' : '',
                   c.isCurrent ? 'current' : '',
                   c.isNeighbor ? 'neighbor' : '',
+                  c.isNeighbor && c.finger !== null ? `tone-${c.fingerJ}` : '',
                 ].join(' ')}
               >
                 {c.isCurrent && <span className="tile-tag">digit</span>}
                 {c.isNeighbor && <span className="tile-tag">{pairTag}</span>}
                 {c.digit}
               </div>
+              {bDigits && (
+                <div className="finger-slot">
+                  {c.finger !== null && (
+                    <span className={`finger-chip tone-${c.fingerJ}`}>×{c.finger}</span>
+                  )}
+                </div>
+              )}
               <div
                 className={[
                   'result-slot',
@@ -108,7 +134,10 @@ export default function DigitStepper({ working, startDone = false }: Props) {
               </span>
             )}
             {step.parts.map((p, i) => (
-              <span className="part-pill" key={i}>
+              <span
+                className={`part-pill${p.tone !== undefined ? ` tone-${p.tone}` : ''}`}
+                key={i}
+              >
                 {p.label} <span className="val">{p.value}</span>
               </span>
             ))}

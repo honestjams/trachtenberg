@@ -1,7 +1,7 @@
 import type { Multiplier } from './trachtenberg';
 
-/** what a practice question is scored under: a rule multiplier, or the direct method by size */
-export type PracticeKey = Multiplier | 'big2' | 'big3';
+/** what a practice question is scored under: a rule multiplier, the direct method by size, or another skill */
+export type PracticeKey = Multiplier | 'big2' | 'big3' | 'add' | 'div' | 'square';
 
 export interface RuleStats {
   correct: number;

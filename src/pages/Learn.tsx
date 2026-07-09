@@ -67,6 +67,53 @@ export default function Learn() {
           </Link>
         </div>
       </section>
+
+      <section>
+        <div className="setting-label">Beyond multiplication</div>
+        <div className="rule-list">
+          <Link
+            to="/learn/addition"
+            className={`rule-row${masteryFor(stats, 'add') === 'mastered' ? ' mastered' : ''}`}
+          >
+            <div className="rule-num">+</div>
+            <div className="meta">
+              <h3>Speed addition</h3>
+              <p>Never count past eleven — the tick method</p>
+            </div>
+            <span className="chev">›</span>
+          </Link>
+          <Link
+            to="/learn/division"
+            className={`rule-row${masteryFor(stats, 'div') === 'mastered' ? ' mastered' : ''}`}
+          >
+            <div className="rule-num">÷</div>
+            <div className="meta">
+              <h3>Speed division</h3>
+              <p>Left to right, sliding the remainder along</p>
+            </div>
+            <span className="chev">›</span>
+          </Link>
+          <Link
+            to="/learn/squares"
+            className={`rule-row${masteryFor(stats, 'square') === 'mastered' ? ' mastered' : ''}`}
+          >
+            <div className="rule-num">𝑛²</div>
+            <div className="meta">
+              <h3>Squaring shortcuts</h3>
+              <p>Ends in 5, near 50, near 100 — in one breath</p>
+            </div>
+            <span className="chev">›</span>
+          </Link>
+          <Link to="/learn/check" className="rule-row">
+            <div className="rule-num">✓</div>
+            <div className="meta">
+              <h3>Check your work</h3>
+              <p>The digit-sum check catches mistakes in seconds</p>
+            </div>
+            <span className="chev">›</span>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }

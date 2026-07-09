@@ -1,8 +1,12 @@
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import NavBar from './components/NavBar';
+import AdditionTutorial from './pages/AdditionTutorial';
 import Basics from './pages/Basics';
+import CheckTutorial from './pages/CheckTutorial';
 import DirectTutorial from './pages/DirectTutorial';
+import DivisionTutorial from './pages/DivisionTutorial';
+import SquaresTutorial from './pages/SquaresTutorial';
 import Home from './pages/Home';
 import Learn from './pages/Learn';
 import Practice from './pages/Practice';
@@ -23,6 +27,10 @@ export default function App() {
         <Route path="/learn" element={<Learn />} />
         <Route path="/learn/basics" element={<Basics />} />
         <Route path="/learn/direct" element={<DirectTutorial />} />
+        <Route path="/learn/addition" element={<AdditionTutorial />} />
+        <Route path="/learn/division" element={<DivisionTutorial />} />
+        <Route path="/learn/squares" element={<SquaresTutorial />} />
+        <Route path="/learn/check" element={<CheckTutorial />} />
         <Route path="/learn/:multiplier" element={<Tutorial />} />
         <Route path="/practice" element={<Practice />} />
         <Route path="/stats" element={<Stats />} />

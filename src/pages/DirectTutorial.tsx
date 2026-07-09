@@ -3,29 +3,35 @@ import { Link } from 'react-router-dom';
 import DigitStepper from '../components/DigitStepper';
 import { randInt, randomMultiplicand, workOutDirect } from '../lib/trachtenberg';
 
+const FINGERS = [
+  { tone: 0, name: 'Units finger', text: 'the units digit of the multiplier — it always sits under the digit you are working on' },
+  { tone: 1, name: 'Tens finger', text: 'the tens digit of the multiplier — it sits one place to the right, on the neighbor' },
+  { tone: 2, name: 'Hundreds finger', text: 'only for 3-digit multipliers — one more place to the right' },
+];
+
 const RULE_LINES = [
   {
     when: 'Set up',
-    what: 'Put one imaginary zero in front of the number for every digit of the multiplier (two zeros for a 2-digit multiplier).',
+    what: 'Imagine the multiplier written on a little slip of paper, reversed, held under the number — one imaginary zero in front of the number for every digit on the slip.',
   },
   {
-    when: 'Every step',
-    what: 'Multiply the units digit of the multiplier by the current digit, and the tens digit by the neighbor. Add the two products together, plus any carry.',
+    when: 'Each step',
+    what: 'Every finger multiplies the digit directly above it. Add those little products together, plus any carry from the last step.',
   },
   {
     when: 'Write & carry',
-    what: 'Write the units of that total, carry the rest, and slide one place left. The pair of digits you multiply slides left with you — like two fingers moving along the number.',
+    what: 'Write the units of the total under the current digit, carry the tens, and slide the whole slip one place left.',
   },
   {
-    when: 'Bigger still',
-    what: 'A 3-digit multiplier just adds a third finger: hundreds digit × the digit after the neighbor. The pattern extends forever.',
+    when: 'Hanging off',
+    what: 'When a finger pokes past either end of the number it points at nothing — that counts as 0. At the start only the units finger touches; at the end only the highest finger does.',
   },
 ];
 
 const TIPS = [
-  'Only the pair (or trio) of digits under your fingers matters at each step — never the whole number.',
-  'When a finger hangs off either end of the number, that digit counts as 0.',
-  'This is how the system multiplies any two large numbers — no times tables beyond 9 × 9 needed.',
+  'Watch the ×-chips slide under the number in the walkthrough — that slip of paper IS the method.',
+  'Each step is at most two (or three) small times-table products. You never multiply big numbers at all.',
+  'The color of each chip matches the matching line in the calculation, so you can see where every product comes from.',
 ];
 
 export default function DirectTutorial() {
@@ -35,12 +41,34 @@ export default function DirectTutorial() {
   return (
     <div className="page">
       <Link to="/learn" className="back-link">
-        ‹ All rules
+        ‹ All skills
       </Link>
 
       <div className="tagline-banner">
         <div className="eyebrow">Big × big — the two-finger method</div>
         <h2>Multiply any two numbers, two digits at a time</h2>
+      </div>
+
+      <div className="card">
+        <div className="eyebrow" style={{ marginBottom: 8 }}>
+          What are the “fingers”?
+        </div>
+        <p style={{ color: 'var(--muted)', fontSize: '0.92rem', marginBottom: 14 }}>
+          Trachtenberg imagined covering the multiplier with your hand and letting two
+          fingertips rest on the big number. Each fingertip stands for one digit of the
+          multiplier:
+        </p>
+        <div className="finger-legend">
+          {FINGERS.map((f) => (
+            <div className="finger-legend-row" key={f.tone}>
+              <span className={`finger-chip tone-${f.tone}`}>×</span>
+              <div>
+                <strong>{f.name}</strong>
+                <p>{f.text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="card">
@@ -61,6 +89,11 @@ export default function DirectTutorial() {
         <div className="eyebrow" style={{ marginBottom: 14 }}>
           Watch it work — {example.a.toLocaleString()} × {example.b}
         </div>
+        <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginBottom: 14 }}>
+          The colored ×-chips under the number are the fingers. Step through and watch
+          them slide left — every chip multiplies the digit right above it, and each
+          product shows up in the matching color below.
+        </p>
         <DigitStepper working={working} />
         <div className="action-grid" style={{ marginTop: 12 }}>
           <button

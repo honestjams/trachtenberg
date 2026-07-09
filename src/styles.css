@@ -546,6 +546,196 @@ a {
   color: #06202a;
 }
 
+/* the sliding multiplier "fingers" for the direct method */
+.finger-slot {
+  height: 26px;
+  display: grid;
+  place-items: center;
+}
+
+.finger-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 24px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: #fff;
+  animation: slot-pop 0.25s ease;
+}
+
+.finger-chip.tone-0 {
+  background: var(--accent);
+  box-shadow: 0 3px 10px rgba(124, 92, 255, 0.5);
+}
+
+.finger-chip.tone-1 {
+  background: #0891b2;
+  box-shadow: 0 3px 10px rgba(0, 210, 255, 0.35);
+}
+
+.finger-chip.tone-2 {
+  background: #d97706;
+  box-shadow: 0 3px 10px rgba(255, 176, 32, 0.35);
+}
+
+.digit-tile.neighbor.tone-2 {
+  border-color: var(--warn);
+  background: rgba(255, 176, 32, 0.1);
+}
+
+.digit-tile.neighbor.tone-2 .tile-tag {
+  background: var(--warn);
+  color: #2a1a02;
+}
+
+.part-pill.tone-0 {
+  border-color: rgba(124, 92, 255, 0.55);
+}
+
+.part-pill.tone-0 .val {
+  color: #b3a1ff;
+}
+
+.part-pill.tone-1 {
+  border-color: rgba(0, 210, 255, 0.45);
+}
+
+.part-pill.tone-2 {
+  border-color: rgba(255, 176, 32, 0.5);
+}
+
+.part-pill.tone-2 .val {
+  color: var(--warn);
+}
+
+.part-pill.tick {
+  border-color: rgba(255, 176, 32, 0.5);
+}
+
+.part-pill.tick .val {
+  color: var(--warn);
+}
+
+.finger-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.finger-legend-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.finger-legend-row .finger-chip {
+  flex: none;
+  margin-top: 2px;
+}
+
+.finger-legend-row strong {
+  font-size: 0.92rem;
+}
+
+.finger-legend-row p {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* speed addition board */
+.add-grid {
+  border-collapse: collapse;
+  margin: 0 auto;
+}
+
+.add-grid td {
+  min-width: 38px;
+  height: 40px;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  border-radius: 10px;
+}
+
+.add-grid .add-label {
+  min-width: 28px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.add-grid .add-cell.hot {
+  background: rgba(124, 92, 255, 0.16);
+  box-shadow: inset 0 0 0 1.5px rgba(124, 92, 255, 0.55);
+}
+
+.add-rule-row td {
+  border-top: 2px solid var(--border);
+}
+
+.add-grid .add-sub {
+  color: var(--accent-2);
+  font-size: 1.05rem;
+  height: 34px;
+}
+
+.add-grid .add-sub.ticks {
+  color: var(--warn);
+}
+
+.add-grid .add-result {
+  color: var(--good);
+  border-top: 2px solid var(--border);
+}
+
+/* squaring shortcuts */
+.square-breakdown .step-count {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+.square-lines {
+  margin: 12px 0 10px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font-size: 0.95rem;
+}
+
+.square-lines li::marker {
+  color: var(--accent-2);
+  font-weight: 800;
+}
+
+/* stacked addition problem */
+.problem-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: clamp(1.7rem, 8vw, 2.3rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25;
+}
+
+.problem-stack .plus {
+  color: var(--accent-2);
+  margin-right: 10px;
+}
+
+.problem-stack .row:last-child {
+  border-bottom: 3px solid var(--surface-3);
+  padding-bottom: 2px;
+}
+
 .carry-slot {
   height: 18px;
   font-size: 0.72rem;
@@ -935,9 +1125,9 @@ a {
 
 .rule-stat .mult {
   flex: none;
-  width: 66px;
+  width: 74px;
   font-weight: 800;
-  font-size: 0.98rem;
+  font-size: 0.92rem;
   font-variant-numeric: tabular-nums;
 }
 
