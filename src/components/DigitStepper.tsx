@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Working } from '../lib/trachtenberg';
 
 const KIND_LABELS: Record<string, string> = {
@@ -24,6 +24,28 @@ export default function DigitStepper({ working, startDone = false }: Props) {
     setView(startDone ? working.steps.length : 0);
   }, [working, startDone]);
 
+  // keep the active digit visible when the board is wider than the screen
+  const boardRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const board = boardRef.current;
+    if (!board || board.scrollWidth <= board.clientWidth) return;
+    const target = board.querySelector<HTMLElement>('.digit-tile.current');
+    if (!target) {
+      board.scrollTo({ left: 0, behavior: 'smooth' });
+      return;
+    }
+    const cellRect = target.parentElement!.getBoundingClientRect();
+    const boardRect = board.getBoundingClientRect();
+    board.scrollTo({
+      left:
+        board.scrollLeft +
+        (cellRect.left - boardRect.left) -
+        board.clientWidth / 2 +
+        cellRect.width / 2,
+      behavior: 'smooth',
+    });
+  }, [view, working]);
+
   const columns = paddedDigits.map((digit, i) => {
     const position = paddedDigits.length - 1 - i;
     const isPad = i < padCount;
@@ -37,7 +59,7 @@ export default function DigitStepper({ working, startDone = false }: Props) {
 
   return (
     <div className="stepper">
-      <div className="digit-board">
+      <div className="digit-board" ref={boardRef}>
         <div
           className="digit-grid"
           style={{ gridTemplateColumns: `repeat(${paddedDigits.length}, auto)` }}

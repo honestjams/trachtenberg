@@ -674,7 +674,8 @@ a {
 }
 
 .stepper-done .big-answer {
-  font-size: 2.2rem;
+  font-size: clamp(1.35rem, 6vw, 2.2rem);
+  overflow-wrap: anywhere;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   background: var(--grad);
@@ -725,42 +726,126 @@ a {
   padding: 0 8px;
 }
 
-.answer-input {
+.answer-display {
   width: 100%;
   margin-top: 20px;
   background: var(--surface-2);
   border: 2px solid var(--border);
   border-radius: 16px;
   color: var(--text);
-  font-size: 1.7rem;
+  font-size: clamp(1.4rem, 6.5vw, 1.7rem);
   font-weight: 800;
   font-variant-numeric: tabular-nums;
-  text-align: center;
-  padding: 14px;
-  outline: none;
+  letter-spacing: 0.04em;
+  min-height: 66px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  overflow-wrap: anywhere;
   transition: border-color 0.15s ease;
-  -moz-appearance: textfield;
-  appearance: textfield;
 }
 
-.answer-input::-webkit-outer-spin-button,
-.answer-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
+.answer-display .placeholder {
+  color: var(--muted);
+  opacity: 0.6;
 }
 
-.answer-input:focus {
-  border-color: var(--accent);
-}
-
-.answer-input.correct {
+.answer-display.correct {
   border-color: var(--good);
   color: var(--good);
 }
 
-.answer-input.wrong {
+.answer-display.wrong {
   border-color: var(--bad);
   color: var(--bad);
   animation: shake 0.35s ease;
+}
+
+.entry-caret {
+  width: 3px;
+  height: 1.2em;
+  border-radius: 2px;
+  background: var(--accent-2);
+  animation: blink 1.1s steps(1) infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+.entry-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-top: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 4px;
+}
+
+.entry-toggle button {
+  border-radius: 10px;
+  padding: 9px 6px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--muted);
+  transition: all 0.15s ease;
+}
+
+.entry-toggle button.on {
+  background: var(--grad);
+  color: #fff;
+}
+
+.entry-hint {
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.key {
+  height: 60px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.06s ease, background 0.15s ease;
+  user-select: none;
+}
+
+.key:active {
+  transform: scale(0.94);
+  background: var(--surface-3);
+}
+
+.key-del {
+  color: var(--bad);
+  font-size: 1.3rem;
+}
+
+.key-ok {
+  background: var(--grad);
+  border: none;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(124, 92, 255, 0.35);
+}
+
+.key-ok:disabled {
+  opacity: 0.35;
+  pointer-events: none;
 }
 
 @keyframes shake {
@@ -805,7 +890,12 @@ a {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.practice-header .pill {
+  white-space: nowrap;
 }
 
 .streak-flame {

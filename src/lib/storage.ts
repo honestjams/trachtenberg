@@ -13,9 +13,12 @@ export interface Stats {
   totalAnswered: number;
 }
 
+export type EntryMode = 'rtl' | 'ltr';
+
 export interface PracticeSettings {
   multipliers: Multiplier[];
   digitCount: number;
+  entry: EntryMode;
 }
 
 const STATS_KEY = 'trachtenberg.stats.v1';
@@ -74,7 +77,7 @@ export function resetStats(): Stats {
 }
 
 export function loadSettings(): PracticeSettings {
-  return read(SETTINGS_KEY, { multipliers: [11], digitCount: 3 });
+  return read(SETTINGS_KEY, { multipliers: [11], digitCount: 3, entry: 'rtl' });
 }
 
 export function saveSettings(settings: PracticeSettings): void {

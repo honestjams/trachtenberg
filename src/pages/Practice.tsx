@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DigitStepper from '../components/DigitStepper';
 import {
@@ -13,6 +13,7 @@ import {
   loadStats,
   recordAnswer,
   saveSettings,
+  type EntryMode,
 } from '../lib/storage';
 
 const DIGIT_OPTIONS = [
@@ -21,6 +22,8 @@ const DIGIT_OPTIONS = [
   { digits: 4, label: '4 digits' },
   { digits: 5, label: '5 digits' },
 ];
+
+const MAX_ANSWER_DIGITS = 9;
 
 type Phase = 'setup' | 'asking' | 'answered';
 
@@ -42,6 +45,7 @@ export default function Practice() {
     initialMultipliers.length > 0 ? initialMultipliers : [11]
   );
   const [digitCount, setDigitCount] = useState(stored.digitCount);
+  const [entry, setEntry] = useState<EntryMode>(stored.entry ?? 'rtl');
   const [phase, setPhase] = useState<Phase>('setup');
   const [question, setQuestion] = useState<Working | null>(null);
   const [answer, setAnswer] = useState('');
@@ -49,11 +53,13 @@ export default function Practice() {
   const [showSteps, setShowSteps] = useState(false);
   const [streak, setStreak] = useState(() => loadStats().streak);
   const [session, setSession] = useState({ correct: 0, total: 0 });
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (phase === 'asking') inputRef.current?.focus();
-  }, [phase, question]);
+  const persist = (next: Partial<{ multipliers: Multiplier[]; digitCount: number; entry: EntryMode }>) =>
+    saveSettings({
+      multipliers: next.multipliers ?? selected,
+      digitCount: next.digitCount ?? digitCount,
+      entry: next.entry ?? entry,
+    });
 
   const toggle = (m: Multiplier) => {
     setSelected((prev) =>
@@ -65,8 +71,24 @@ export default function Practice() {
     );
   };
 
+  const setEntryMode = (mode: EntryMode) => {
+    setEntry(mode);
+    persist({ entry: mode });
+  };
+
+  const addDigit = (d: string) => {
+    setAnswer((a) => {
+      if (a.length >= MAX_ANSWER_DIGITS) return a;
+      return entry === 'rtl' ? d + a : a + d;
+    });
+  };
+
+  const backspace = () => {
+    setAnswer((a) => (entry === 'rtl' ? a.slice(1) : a.slice(0, -1)));
+  };
+
   const start = () => {
-    saveSettings({ multipliers: selected, digitCount });
+    persist({ multipliers: selected, digitCount });
     setSession({ correct: 0, total: 0 });
     setQuestion(makeQuestion(selected, digitCount));
     setAnswer('');
@@ -75,7 +97,7 @@ export default function Practice() {
   };
 
   const submit = () => {
-    if (!question || answer.trim() === '') return;
+    if (!question || answer === '') return;
     const correct = Number(answer) === question.result;
     const stats = recordAnswer(question.multiplier, correct);
     setStreak(stats.streak);
@@ -90,6 +112,19 @@ export default function Practice() {
     setShowSteps(false);
     setPhase('asking');
   };
+
+  // physical keyboard support
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (phase === 'asking') {
+        if (/^[0-9]$/.test(e.key)) addDigit(e.key);
+        else if (e.key === 'Backspace') backspace();
+        else if (e.key === 'Enter') submit();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  });
 
   if (phase === 'setup') {
     return (
@@ -166,32 +201,60 @@ export default function Practice() {
           {question.multiplier}
         </div>
 
-        <input
-          ref={inputRef}
-          className={`answer-input${
+        <div
+          className={`answer-display${
             phase === 'answered' ? (wasCorrect ? ' correct' : ' wrong') : ''
           }`}
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          placeholder="?"
-          value={answer}
-          disabled={phase === 'answered'}
-          onChange={(e) => setAnswer(e.target.value.replace(/[^0-9]/g, ''))}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') submit();
-          }}
-        />
+          aria-label="your answer"
+        >
+          {phase === 'asking' && entry === 'rtl' && <span className="entry-caret" />}
+          {answer === '' ? <span className="placeholder">?</span> : answer}
+          {phase === 'asking' && entry === 'ltr' && <span className="entry-caret" />}
+        </div>
+
+        <div className="entry-toggle" role="group" aria-label="digit entry direction">
+          <button
+            className={entry === 'rtl' ? 'on' : ''}
+            onClick={() => setEntryMode('rtl')}
+          >
+            ← Units first
+          </button>
+          <button
+            className={entry === 'ltr' ? 'on' : ''}
+            onClick={() => setEntryMode('ltr')}
+          >
+            Left to right →
+          </button>
+        </div>
+        <p className="entry-hint">
+          {entry === 'rtl'
+            ? 'Digits fill in from the right — type the answer as you work it out.'
+            : 'Digits type in the usual way, left to right.'}
+        </p>
       </div>
 
       {phase === 'asking' && (
-        <button
-          className="btn btn-primary btn-block"
-          onClick={submit}
-          disabled={answer.trim() === ''}
-        >
-          Check answer
-        </button>
+        <div className="keypad">
+          {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((d) => (
+            <button key={d} className="key" onClick={() => addDigit(d)}>
+              {d}
+            </button>
+          ))}
+          <button className="key key-del" onClick={backspace} aria-label="delete">
+            ⌫
+          </button>
+          <button className="key" onClick={() => addDigit('0')}>
+            0
+          </button>
+          <button
+            className="key key-ok"
+            onClick={submit}
+            disabled={answer === ''}
+            aria-label="check answer"
+          >
+            ✓
+          </button>
+        </div>
       )}
 
       {phase === 'answered' && (
