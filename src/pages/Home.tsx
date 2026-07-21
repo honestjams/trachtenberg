@@ -11,7 +11,12 @@ export default function Home() {
   return (
     <div className="page">
       <header className="hero">
-        <div className="eyebrow">The Trachtenberg Method</div>
+        <div className="eyebrow">
+          The Trachtenberg Method ·{' '}
+          <Link to="/" style={{ textDecoration: 'underline' }}>
+            switch mode
+          </Link>
+        </div>
         <h1>
           Do <span className="gradient-text">huge math</span> in your head
         </h1>

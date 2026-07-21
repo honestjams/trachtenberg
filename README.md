@@ -1,10 +1,17 @@
-# Trachtenberg — Speed Math
+# Trachtenberg — Speed Math & High-School Mathematics
 
-A mobile-first web app for learning the [Trachtenberg system](https://en.wikipedia.org/wiki/Trachtenberg_system)
-of speed multiplication: interactive digit-by-digit tutorials for every rule
-(×2 through ×12) plus endless practice with step-by-step solutions.
+A mobile-first web app with two modes, chosen on load:
 
-## Features
+- **Mathematics** — the high-school journey, grades 7–12: pre-algebra,
+  Algebra I, Geometry, Algebra II and Precalculus. 33 topics, each with a
+  concept lesson, regenerable worked examples, and endless auto-graded
+  practice. Answers support integers, negatives, decimals, fractions,
+  coordinate pairs / multiple roots (comma-separated), and multiple choice.
+- **Trachtenberg** — the [Trachtenberg system](https://en.wikipedia.org/wiki/Trachtenberg_system)
+  of speed mathematics: interactive digit-by-digit tutorials for every rule
+  plus endless practice with step-by-step solutions.
+
+## Trachtenberg features
 
 - **Learn** — the five core concepts (neighbors, leading zeros, halving,
   the odd +5, carries) and an interactive walkthrough for each multiplier rule,

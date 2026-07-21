@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 
 const icons = {
   home: (
@@ -23,16 +23,33 @@ const icons = {
       <path d="M4 20V10M10 20V4M16 20v-6M21 20H3" />
     </svg>
   ),
+  swap: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M7 8h13M17 4l4 4-4 4" />
+      <path d="M17 16H4M7 12l-4 4 4 4" />
+    </svg>
+  ),
 };
 
-const items = [
-  { to: '/', label: 'Home', icon: icons.home, end: true },
+const TRACH_ITEMS = [
+  { to: '/trachtenberg', label: 'Home', icon: icons.home, end: true },
   { to: '/learn', label: 'Learn', icon: icons.learn, end: false },
   { to: '/practice', label: 'Practice', icon: icons.practice, end: false },
   { to: '/stats', label: 'Stats', icon: icons.stats, end: false },
 ];
 
+const MATH_ITEMS = [
+  { to: '/math', label: 'Grades', icon: icons.learn, end: true },
+  { to: '/math/practice', label: 'Practice', icon: icons.practice, end: false },
+  { to: '/math/stats', label: 'Stats', icon: icons.stats, end: false },
+  { to: '/', label: 'Mode', icon: icons.swap, end: true },
+];
+
 export default function NavBar() {
+  const { pathname } = useLocation();
+  if (pathname === '/') return null;
+  const items = pathname.startsWith('/math') ? MATH_ITEMS : TRACH_ITEMS;
+
   return (
     <nav className="nav">
       <div className="nav-inner">

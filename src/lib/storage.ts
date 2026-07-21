@@ -95,3 +95,71 @@ export function masteryFor(stats: Stats, key: PracticeKey): Mastery {
   if (rule.correct >= 10 && rule.correct / rule.total >= 0.8) return 'mastered';
   return 'learning';
 }
+
+/* ---------------- mathematics mode ---------------- */
+
+export interface MathStats {
+  byTopic: Record<string, RuleStats>;
+  streak: number;
+  bestStreak: number;
+  totalCorrect: number;
+  totalAnswered: number;
+}
+
+export interface MathSettings {
+  grade: number;
+  topicIds: string[];
+}
+
+const MATH_STATS_KEY = 'trachtenberg.mathstats.v1';
+const MATH_SETTINGS_KEY = 'trachtenberg.mathsettings.v1';
+
+const emptyMathStats: MathStats = {
+  byTopic: {},
+  streak: 0,
+  bestStreak: 0,
+  totalCorrect: 0,
+  totalAnswered: 0,
+};
+
+export function loadMathStats(): MathStats {
+  return read(MATH_STATS_KEY, emptyMathStats);
+}
+
+export function recordMathAnswer(topicId: string, correct: boolean): MathStats {
+  const stats = loadMathStats();
+  const topic = stats.byTopic[topicId] ?? { correct: 0, total: 0 };
+  topic.total += 1;
+  if (correct) topic.correct += 1;
+  stats.byTopic[topicId] = topic;
+  stats.totalAnswered += 1;
+  if (correct) {
+    stats.totalCorrect += 1;
+    stats.streak += 1;
+    stats.bestStreak = Math.max(stats.bestStreak, stats.streak);
+  } else {
+    stats.streak = 0;
+  }
+  write(MATH_STATS_KEY, stats);
+  return stats;
+}
+
+export function resetMathStats(): MathStats {
+  write(MATH_STATS_KEY, emptyMathStats);
+  return { ...emptyMathStats, byTopic: {} };
+}
+
+export function mathMasteryFor(stats: MathStats, topicId: string): Mastery {
+  const topic = stats.byTopic[topicId];
+  if (!topic || topic.total === 0) return 'new';
+  if (topic.correct >= 10 && topic.correct / topic.total >= 0.8) return 'mastered';
+  return 'learning';
+}
+
+export function loadMathSettings(): MathSettings {
+  return read(MATH_SETTINGS_KEY, { grade: 7, topicIds: [] });
+}
+
+export function saveMathSettings(settings: MathSettings): void {
+  write(MATH_SETTINGS_KEY, settings);
+}

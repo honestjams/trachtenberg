@@ -202,6 +202,121 @@ a {
   background: rgba(255, 176, 32, 0.08);
 }
 
+/* ---------- mode select ---------- */
+
+.mode-select {
+  gap: 16px;
+}
+
+.mode-card {
+  border-radius: var(--radius);
+  padding: 26px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #fff;
+  transition: transform 0.1s ease;
+}
+
+.mode-card:active {
+  transform: scale(0.98);
+}
+
+.mode-card .big {
+  font-size: 2.2rem;
+}
+
+.mode-card h2 {
+  font-size: 1.5rem;
+}
+
+.mode-card p {
+  font-size: 0.92rem;
+  opacity: 0.9;
+  line-height: 1.45;
+}
+
+.mode-cta {
+  margin-top: 8px;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.mode-math {
+  background: var(--grad);
+  box-shadow: 0 12px 34px rgba(124, 92, 255, 0.35);
+}
+
+.mode-trach {
+  background: var(--grad-warm);
+  box-shadow: 0 12px 34px rgba(255, 92, 122, 0.3);
+}
+
+/* ---------- math mode ---------- */
+
+.problem-math {
+  font-size: clamp(1.25rem, 5.5vw, 1.6rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  white-space: pre-line;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.mc-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mc-option {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 15px 18px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  transition: transform 0.08s ease, border-color 0.15s ease;
+  overflow-wrap: anywhere;
+}
+
+.mc-option:active {
+  transform: scale(0.98);
+}
+
+.mc-option.mc-correct {
+  border-color: var(--good);
+  background: rgba(46, 230, 168, 0.1);
+  color: var(--good);
+  opacity: 1;
+}
+
+.mc-option.mc-wrong {
+  border-color: var(--bad);
+  background: rgba(255, 92, 122, 0.08);
+  color: var(--bad);
+  opacity: 1;
+}
+
+.mc-option:disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.key-extra {
+  color: var(--accent-2);
+  height: 48px;
+  font-size: 1.25rem;
+}
+
+.chip.chip-wide {
+  font-size: 0.85rem;
+  min-width: 0;
+  padding: 9px 12px;
+}
+
 /* ---------- bottom nav ---------- */
 
 .nav {
