@@ -38,18 +38,19 @@ const icons = {
 };
 
 const TRACH_ITEMS = [
-  { to: '/trachtenberg', label: 'Home', icon: icons.home, end: true },
+  { to: '/', label: 'Home', icon: icons.home, end: true },
+  { to: '/trachtenberg', label: 'Overview', icon: icons.swap, end: true },
   { to: '/learn', label: 'Learn', icon: icons.learn, end: false },
   { to: '/practice', label: 'Practice', icon: icons.practice, end: false },
   { to: '/stats', label: 'Stats', icon: icons.stats, end: false },
 ];
 
 const MATH_ITEMS = [
+  { to: '/', label: 'Home', icon: icons.home, end: true },
   { to: '/math', label: 'Grades', icon: icons.learn, end: true },
   { to: '/math/practice', label: 'Practice', icon: icons.practice, end: false },
   { to: '/math/battle', label: 'Battle', icon: icons.battle, end: false },
   { to: '/math/stats', label: 'Stats', icon: icons.stats, end: false },
-  { to: '/', label: 'Mode', icon: icons.swap, end: true },
 ];
 
 export default function NavBar() {

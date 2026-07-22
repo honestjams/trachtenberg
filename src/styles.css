@@ -252,6 +252,11 @@ a {
   box-shadow: 0 12px 34px rgba(255, 92, 122, 0.3);
 }
 
+.mode-battle {
+  background: linear-gradient(135deg, #0d9488 0%, #2ee6a8 100%);
+  box-shadow: 0 12px 34px rgba(46, 230, 168, 0.25);
+}
+
 /* ---------- math mode ---------- */
 
 .problem-math {
@@ -460,6 +465,53 @@ a {
 
 .result-emoji {
   font-size: 3.4rem;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.92rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.lb-row:last-of-type {
+  border-bottom: none;
+}
+
+.lb-row.lb-head {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.lb-row.me {
+  color: #b3a1ff;
+  font-weight: 800;
+}
+
+.lb-rank {
+  flex: none;
+  width: 34px;
+}
+
+.lb-name {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 700;
+}
+
+.lb-num {
+  flex: none;
+  width: 44px;
+  text-align: right;
 }
 
 /* ---------- bottom nav ---------- */

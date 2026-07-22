@@ -2,14 +2,17 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { RealtimeChannel } from '@supabase/supabase-js';
 import MathKeypad from '../../components/MathKeypad';
-import { GRADES } from '../../math/curriculum';
 import { answerText, gradeAnswer, keypadKeysFor } from '../../math/grading';
 import type { MathQuestion } from '../../math/types';
 import {
+  ARENAS,
+  arenaLabel,
   BATTLE_SECONDS,
   BOT_NAMES,
   botProfile,
   cancelMatch,
+  fetchLeaderboard,
+  fetchMyStats,
   joinMatch,
   loadPlayerName,
   makeBattleQuestions,
@@ -17,9 +20,11 @@ import {
   reportScore,
   savePlayerName,
   supabase,
+  type LeaderboardRow,
+  type MyStatsRow,
 } from '../../math/battle';
 
-type Phase = 'setup' | 'searching' | 'countdown' | 'racing' | 'results';
+type Phase = 'setup' | 'searching' | 'countdown' | 'racing' | 'results' | 'leaderboard';
 
 interface Opponent {
   name: string;
@@ -35,7 +40,10 @@ function toggleNeg(answer: string): string {
 
 export default function Battle() {
   const [name, setName] = useState(loadPlayerName);
-  const [grade, setGrade] = useState(7);
+  const [arena, setArena] = useState<number>(ARENAS[0]);
+  const [board, setBoard] = useState<LeaderboardRow[] | null>(null);
+  const [boardArena, setBoardArena] = useState<number>(ARENAS[0]);
+  const [myStats, setMyStats] = useState<MyStatsRow[] | null>(null);
   const [phase, setPhase] = useState<Phase>('setup');
   const [error, setError] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(3);
@@ -141,6 +149,22 @@ export default function Battle() {
     }
   }, []);
 
+  /* ---------- leaderboards ---------- */
+
+  const openLeaderboard = async (a: number) => {
+    setBoardArena(a);
+    setBoard(null);
+    setPhase('leaderboard');
+    fetchMyStats()
+      .then(setMyStats)
+      .catch(() => setMyStats([]));
+    try {
+      setBoard(await fetchLeaderboard(a));
+    } catch {
+      setBoard([]);
+    }
+  };
+
   /* ---------- online matchmaking ---------- */
 
   const findOpponent = async () => {
@@ -151,8 +175,8 @@ export default function Battle() {
     setPhase('searching');
     later(() => setSearchingLong(true), 10_000);
     try {
-      const qs = makeBattleQuestions(grade);
-      const match = await joinMatch(grade, trimmed, qs);
+      const qs = makeBattleQuestions(arena);
+      const match = await joinMatch(arena, trimmed, qs);
       matchIdRef.current = match.id;
       const iAmCreator = match.player1 === playerId();
       const matchQuestions = match.questions;
@@ -249,8 +273,8 @@ export default function Battle() {
       matchIdRef.current = null;
     }
     const botName = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
-    const profile = botProfile(grade);
-    beginRace(makeBattleQuestions(grade), { name: botName, bot: true });
+    const profile = botProfile(arena);
+    beginRace(makeBattleQuestions(arena), { name: botName, bot: true });
     const botTick = () => {
       const delay = profile.minMs + Math.random() * (profile.maxMs - profile.minMs);
       botTimerRef.current = window.setTimeout(() => {
@@ -350,19 +374,26 @@ export default function Battle() {
             onChange={(e) => setName(e.target.value)}
           />
           <div className="setting-label" style={{ marginTop: 16 }}>
-            Grade
+            Arena
           </div>
           <div className="chip-row">
-            {GRADES.map((g) => (
+            {ARENAS.map((a) => (
               <button
-                key={g.grade}
-                className={`chip${grade === g.grade ? ' on' : ''}`}
-                onClick={() => setGrade(g.grade)}
+                key={a}
+                className={`chip${a === 1 || a === 13 ? ' chip-wide' : ''}${arena === a ? ' on' : ''}`}
+                onClick={() => setArena(a)}
               >
-                {g.grade}
+                {a === 1 ? '⭐ Easy' : a === 13 ? '⚡ Trachtenberg' : a}
               </button>
             ))}
           </div>
+          <p className="entry-hint">
+            {arena === 1
+              ? 'Quick-fire 1–12 addition, subtraction, multiplication and division.'
+              : arena === 13
+                ? 'Speed-system material: rule multipliers, big × big, columns, squares.'
+                : `Mixed questions from every grade ${arena} topic.`}
+          </p>
         </div>
 
         <button className="btn btn-warm btn-block" onClick={() => void findOpponent()}>
@@ -371,6 +402,107 @@ export default function Battle() {
         <button className="btn btn-ghost btn-block" onClick={playBot}>
           🤖 Battle the robot instead
         </button>
+        <button className="btn btn-ghost btn-block" onClick={() => void openLeaderboard(arena)}>
+          🏆 Leaderboards &amp; records
+        </button>
+      </div>
+    );
+  }
+
+  if (phase === 'leaderboard') {
+    return (
+      <div className="page">
+        <button className="back-link" onClick={() => setPhase('setup')}>
+          ‹ Battle
+        </button>
+        <header>
+          <div className="eyebrow">Leaderboards</div>
+          <h1 style={{ fontSize: '1.7rem', marginTop: 4 }}>Who rules the arena?</h1>
+        </header>
+
+        <div className="chip-row">
+          {ARENAS.map((a) => (
+            <button
+              key={a}
+              className={`chip${a === 1 || a === 13 ? ' chip-wide' : ''}${boardArena === a ? ' on' : ''}`}
+              onClick={() => void openLeaderboard(a)}
+            >
+              {a === 1 ? '⭐' : a === 13 ? '⚡' : a}
+            </button>
+          ))}
+        </div>
+
+        <div className="card">
+          <div className="eyebrow" style={{ marginBottom: 10 }}>
+            {arenaLabel(boardArena)} arena · top players
+          </div>
+          {board === null ? (
+            <p style={{ color: 'var(--muted)' }}>Loading…</p>
+          ) : board.length === 0 ? (
+            <p style={{ color: 'var(--muted)' }}>
+              No finished matches here yet — be the first on the board!
+            </p>
+          ) : (
+            <>
+              <div className="lb-row lb-head">
+                <span className="lb-rank">#</span>
+                <span className="lb-name">Player</span>
+                <span className="lb-num">Wins</span>
+                <span className="lb-num">Games</span>
+                <span className="lb-num">Best</span>
+              </div>
+              {board.map((row, i) => (
+                <div
+                  className={`lb-row${row.player === playerId() ? ' me' : ''}`}
+                  key={row.player}
+                >
+                  <span className="lb-rank">{i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}</span>
+                  <span className="lb-name">{row.name}</span>
+                  <span className="lb-num">{row.wins}</span>
+                  <span className="lb-num">{row.played}</span>
+                  <span className="lb-num">{row.best}</span>
+                </div>
+              ))}
+              <p className="entry-hint" style={{ marginTop: 10 }}>
+                Arena record: {Math.max(...board.map((r) => r.best))} correct in one match,
+                by {board.reduce((a, b) => (b.best > a.best ? b : a)).name}.
+              </p>
+            </>
+          )}
+        </div>
+
+        <div className="card">
+          <div className="eyebrow" style={{ marginBottom: 10 }}>
+            Your record
+          </div>
+          {myStats === null ? (
+            <p style={{ color: 'var(--muted)' }}>Loading…</p>
+          ) : myStats.length === 0 ? (
+            <p style={{ color: 'var(--muted)' }}>
+              You haven't finished an online match yet. Robot battles don't count here —
+              go beat a real human!
+            </p>
+          ) : (
+            <>
+              <div className="lb-row lb-head">
+                <span className="lb-name" style={{ paddingLeft: 0 }}>Arena</span>
+                <span className="lb-num">W</span>
+                <span className="lb-num">L</span>
+                <span className="lb-num">T</span>
+                <span className="lb-num">Best</span>
+              </div>
+              {myStats.map((row) => (
+                <div className="lb-row" key={row.arena}>
+                  <span className="lb-name" style={{ paddingLeft: 0 }}>{arenaLabel(row.arena)}</span>
+                  <span className="lb-num">{row.wins}</span>
+                  <span className="lb-num">{row.losses}</span>
+                  <span className="lb-num">{row.ties}</span>
+                  <span className="lb-num">{row.best}</span>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
       </div>
     );
   }
@@ -382,7 +514,7 @@ export default function Battle() {
           <div className="searching-pulse">⚔️</div>
           <h2 style={{ marginTop: 14 }}>Looking for an opponent…</h2>
           <p style={{ color: 'var(--muted)', marginTop: 8, fontSize: '0.92rem' }}>
-            Grade {grade} arena. The first player to arrive gets matched with you.
+            The {arenaLabel(arena)} arena. The first player to arrive gets matched with you.
           </p>
         </div>
         {searchingLong && (
@@ -402,7 +534,7 @@ export default function Battle() {
       <div className="page">
         <div className="card" style={{ textAlign: 'center', padding: '48px 20px' }}>
           <div className="step-count">
-            You vs {opponent?.name} · grade {grade}
+            You vs {opponent?.name} · {arenaLabel(arena)} arena
           </div>
           <div className="countdown-big">{countdown}</div>
           <p style={{ color: 'var(--muted)' }}>Most correct answers in {BATTLE_SECONDS} seconds wins!</p>

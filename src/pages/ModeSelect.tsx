@@ -4,7 +4,7 @@ export default function ModeSelect() {
   return (
     <div className="page mode-select">
       <header className="hero" style={{ textAlign: 'center', paddingTop: 48 }}>
-        <div className="eyebrow">Two ways to get faster at math</div>
+        <div className="eyebrow">Learn it · master it · race it</div>
         <h1 style={{ marginTop: 8 }}>
           What are we <span className="gradient-text">learning</span> today?
         </h1>
@@ -29,6 +29,16 @@ export default function ModeSelect() {
           numbers in your head, one digit at a time.
         </p>
         <span className="mode-cta">Start speeding →</span>
+      </Link>
+
+      <Link to="/math/battle" className="mode-card mode-battle">
+        <span className="big">⚔️</span>
+        <h2>Multiplayer</h2>
+        <p>
+          Race a real opponent live — 60 seconds, same questions, most correct
+          answers wins. Easy arithmetic, any grade, or Trachtenberg speed tricks.
+        </p>
+        <span className="mode-cta">Find an opponent →</span>
       </Link>
     </div>
   );

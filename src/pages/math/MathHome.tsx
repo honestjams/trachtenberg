@@ -12,9 +12,7 @@ export default function MathHome() {
   return (
     <div className="page">
       <header className="hero">
-        <div className="eyebrow">
-          Mathematics · <Link to="/" style={{ textDecoration: 'underline' }}>switch mode</Link>
-        </div>
+        <div className="eyebrow">Mathematics</div>
         <h1>
           Grade 7 to 12, <span className="gradient-text">one topic at a time</span>
         </h1>
