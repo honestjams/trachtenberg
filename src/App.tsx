@@ -1,5 +1,5 @@
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import NavBar from './components/NavBar';
 import AdditionTutorial from './pages/AdditionTutorial';
 import Basics from './pages/Basics';
@@ -9,6 +9,8 @@ import DivisionTutorial from './pages/DivisionTutorial';
 import ModeSelect from './pages/ModeSelect';
 import SquaresTutorial from './pages/SquaresTutorial';
 import GradePage from './pages/math/GradePage';
+
+const Battle = lazy(() => import('./pages/math/Battle'));
 import MathHome from './pages/math/MathHome';
 import MathPractice from './pages/math/MathPractice';
 import MathStats from './pages/math/MathStats';
@@ -35,6 +37,14 @@ export default function App() {
         <Route path="/math/grade/:grade" element={<GradePage />} />
         <Route path="/math/topic/:id" element={<TopicLesson />} />
         <Route path="/math/practice" element={<MathPractice />} />
+        <Route
+          path="/math/battle"
+          element={
+            <Suspense fallback={<div className="page" />}>
+              <Battle />
+            </Suspense>
+          }
+        />
         <Route path="/math/stats" element={<MathStats />} />
         <Route path="/learn" element={<Learn />} />
         <Route path="/learn/basics" element={<Basics />} />

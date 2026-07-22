@@ -7,6 +7,9 @@ A mobile-first web app with two modes, chosen on load:
   concept lesson, regenerable worked examples, and endless auto-graded
   practice. Answers support integers, negatives, decimals, fractions,
   coordinate pairs / multiple roots (comma-separated), and multiple choice.
+  **Battle mode** pairs you live against another player (Mathletics-style):
+  same questions, 60 seconds, most correct answers wins — with live score
+  sync over Supabase Realtime, and a robot opponent when no one is around.
 - **Trachtenberg** — the [Trachtenberg system](https://en.wikipedia.org/wiki/Trachtenberg_system)
   of speed mathematics: interactive digit-by-digit tutorials for every rule
   plus endless practice with step-by-step solutions.

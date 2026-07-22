@@ -29,6 +29,12 @@ const icons = {
       <path d="M17 16H4M7 12l-4 4 4 4" />
     </svg>
   ),
+  battle: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.5 3 21 9.5 9.5 21 3 14.5 14.5 3z" />
+      <path d="M3 21l3.5-3.5M17 7l-4 4" />
+    </svg>
+  ),
 };
 
 const TRACH_ITEMS = [
@@ -41,6 +47,7 @@ const TRACH_ITEMS = [
 const MATH_ITEMS = [
   { to: '/math', label: 'Grades', icon: icons.learn, end: true },
   { to: '/math/practice', label: 'Practice', icon: icons.practice, end: false },
+  { to: '/math/battle', label: 'Battle', icon: icons.battle, end: false },
   { to: '/math/stats', label: 'Stats', icon: icons.stats, end: false },
   { to: '/', label: 'Mode', icon: icons.swap, end: true },
 ];
@@ -52,7 +59,10 @@ export default function NavBar() {
 
   return (
     <nav className="nav">
-      <div className="nav-inner">
+      <div
+        className="nav-inner"
+        style={{ gridTemplateColumns: `repeat(${items.length}, 1fr)` }}
+      >
         {items.map((item) => (
           <NavLink
             key={item.to}

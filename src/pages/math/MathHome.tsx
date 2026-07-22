@@ -61,9 +61,14 @@ export default function MathHome() {
         })}
       </div>
 
-      <Link to="/math/practice" className="btn btn-warm btn-block">
-        ⚡ Practice anything
-      </Link>
+      <div className="action-grid">
+        <Link to="/math/practice" className="btn btn-warm">
+          ⚡ Practice
+        </Link>
+        <Link to="/math/battle" className="btn btn-primary">
+          ⚔️ Battle
+        </Link>
+      </div>
     </div>
   );
 }

@@ -317,6 +317,151 @@ a {
   padding: 9px 12px;
 }
 
+/* ---------- battle ---------- */
+
+.name-input {
+  width: 100%;
+  background: var(--surface-2);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.name-input:focus {
+  border-color: var(--accent);
+}
+
+.searching-pulse {
+  font-size: 3rem;
+  animation: pulse 1.2s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.25);
+    opacity: 0.6;
+  }
+}
+
+.countdown-big {
+  font-size: 5rem;
+  font-weight: 800;
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  line-height: 1.2;
+  margin: 10px 0;
+  animation: slot-pop 0.4s ease;
+}
+
+.battle-timer {
+  position: relative;
+  height: 30px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.battle-timer-fill {
+  height: 100%;
+  background: var(--grad-warm);
+  border-radius: 999px;
+  transition: width 0.25s linear;
+}
+
+.battle-timer-label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.vs-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.vs-player {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.vs-player.me {
+  border-color: rgba(124, 92, 255, 0.5);
+  background: rgba(124, 92, 255, 0.1);
+}
+
+.vs-name {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vs-player.me .vs-name {
+  color: #b3a1ff;
+}
+
+.vs-score {
+  font-size: 1.4rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.vs-divider {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--muted);
+  flex: none;
+}
+
+.battle-q {
+  transition: border-color 0.1s ease;
+}
+
+.battle-q.flash-right {
+  border-color: var(--good);
+  box-shadow: 0 0 20px rgba(46, 230, 168, 0.25);
+}
+
+.battle-q.flash-wrong {
+  border-color: var(--bad);
+  box-shadow: 0 0 20px rgba(255, 92, 122, 0.25);
+}
+
+.result-emoji {
+  font-size: 3.4rem;
+}
+
 /* ---------- bottom nav ---------- */
 
 .nav {
