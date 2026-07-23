@@ -514,6 +514,22 @@ a {
   text-align: right;
 }
 
+/* ---------- footer ---------- */
+
+.footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.8rem;
+  padding: 28px 0 4px;
+}
+
+.footer a {
+  color: var(--accent-2);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* ---------- bottom nav ---------- */
 
 .nav {

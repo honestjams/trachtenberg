@@ -58,6 +58,16 @@ export default function App() {
         <Route path="/stats" element={<Stats />} />
         <Route path="*" element={<ModeSelect />} />
       </Routes>
+      <footer className="footer">
+        Enjoying the app?{' '}
+        <a
+          href="https://paypal.me/joshbe2802"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ☕ Support it with a donation
+        </a>
+      </footer>
       <NavBar />
     </>
   );
